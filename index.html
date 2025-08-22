@@ -1,15 +1,13 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
   <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Sistema de Gestão Financeira</title>
-    <!-- Font Awesome para ícones -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
-    <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js" defer></script>
+    <script src="https://unpkg.com/xlsx@0.18.5/dist/xlsx.full.min.js" defer></script>
     <style>
       :root {
         --bg-color: #f4f4f4;
@@ -22,7 +20,6 @@
         --border-color: #ddd;
         --shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
       }
-
       [data-theme="dark"] {
         --bg-color: #1a1a1a;
         --card-bg: #2c2c2c;
@@ -30,38 +27,36 @@
         --border-color: #444;
         --shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
       }
-
       * {
         box-sizing: border-box;
+        margin: 0;
+        padding: 0;
       }
-
       body {
-        font-family: Arial, sans-serif;
-        margin: 20px;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        margin: 10px;
         background-color: var(--bg-color);
         color: var(--text-color);
         transition: background-color 0.3s, color 0.3s;
+        overscroll-behavior: none;
       }
-
-      h2,
-      h3 {
+      h2, h3 {
         color: var(--text-color);
+        font-size: 1.4rem;
+        margin-bottom: 10px;
       }
-
       .container {
-        max-width: 1200px;
-        margin: 0 auto;
+        max-width: 100%;
+        padding: 0 10px;
       }
-
       .card {
         background-color: var(--card-bg);
-        padding: 20px;
-        margin-bottom: 20px;
+        padding: 15px;
+        margin-bottom: 15px;
         border-radius: 8px;
         box-shadow: var(--shadow);
         border: 1px solid var(--border-color);
       }
-
       input[type="email"],
       input[type="password"],
       input[type="date"],
@@ -70,80 +65,75 @@
       select,
       textarea {
         width: 100%;
-        padding: 12px;
-        margin-bottom: 15px;
+        padding: 10px;
+        margin-bottom: 10px;
         border: 1px solid var(--border-color);
         border-radius: 4px;
-        font-size: 16px;
+        font-size: 1rem;
         background-color: var(--card-bg);
         color: var(--text-color);
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
       }
-
       button {
         background-color: var(--button-bg);
         color: white;
-        padding: 12px 20px;
+        padding: 10px;
         border: none;
         border-radius: 4px;
         cursor: pointer;
-        font-size: 16px;
-        display: inline-flex;
+        font-size: 1rem;
+        width: 100%;
+        display: flex;
         align-items: center;
+        justify-content: center;
         gap: 8px;
         transition: background-color 0.2s;
+        touch-action: manipulation;
       }
-
       button:hover {
         background-color: var(--button-hover);
       }
-
       .download-buttons button,
       .report-section button {
         background-color: var(--export-button-bg);
       }
-
       .download-buttons button:hover,
       .report-section button:hover {
         background-color: var(--export-button-hover);
       }
-
       #bankList .card,
       #incomeList .card,
       #transferList .card,
       #expenseList .card,
       #lendingList .card,
       #peopleList .card {
-        margin-top: 15px;
-        padding: 15px;
+        margin-top: 10px;
+        padding: 12px;
       }
-
       .installment-card {
         background-color: var(--card-bg);
-        padding: 10px;
-        margin-top: 10px;
+        padding: 8px;
+        margin-top: 8px;
         border: 1px solid var(--border-color);
         border-radius: 4px;
       }
-
       .report-section input[type="text"] {
         width: 100%;
-        max-width: 300px;
-        display: inline-block;
-        margin-right: 10px;
+        margin-bottom: 10px;
       }
-
       .theme-toggle {
         position: fixed;
-        top: 20px;
-        right: 20px;
+        top: 10px;
+        right: 10px;
         background-color: transparent;
         border: none;
-        font-size: 24px;
+        font-size: 1.5rem;
         cursor: pointer;
         color: var(--text-color);
+        z-index: 1000;
       }
-
-      /* Estilos para accordion em mobile */
       .accordion-header {
         display: none;
         cursor: pointer;
@@ -152,62 +142,60 @@
         color: white;
         border-radius: 4px;
         margin-bottom: 10px;
+        font-size: 1rem;
+        font-weight: bold;
       }
-
       .accordion-content {
         display: block;
       }
-
-      /* Responsividade */
+      .accordion-content.active {
+        display: block;
+      }
       @media (max-width: 768px) {
         body {
-          margin: 10px;
+          margin: 5px;
         }
-
         .container {
-          padding: 0 10px;
+          padding: 0 5px;
         }
-
-        input[type="email"],
-        input[type="password"],
-        input[type="date"],
-        input[type="text"],
-        input[type="number"],
-        select,
-        textarea {
-          font-size: 14px;
-          padding: 10px;
+        h2, h3 {
+          font-size: 1.2rem;
         }
-
+        input, select, textarea {
+          font-size: 0.9rem;
+          padding: 8px;
+        }
         button {
-          font-size: 14px;
-          padding: 10px 15px;
-          width: 100%;
-          margin-bottom: 10px;
+          font-size: 0.9rem;
+          padding: 8px;
         }
-
-        .report-section input[type="text"] {
-          max-width: 100%;
-          margin-bottom: 10px;
-        }
-
         .accordion-header {
           display: block;
         }
-
         .accordion-content {
           display: none;
         }
-
         .accordion-content.active {
           display: block;
         }
+        .card {
+          padding: 10px;
+          margin-bottom: 10px;
+        }
+      }
+      @media (max-width: 480px) {
+        h2, h3 {
+          font-size: 1rem;
+        }
+        input, select, textarea {
+          font-size: 0.85rem;
+        }
+        button {
+          font-size: 0.85rem;
+        }
       }
     </style>
-    <script type="text/javascript" src="./index.js" defer=""></script>
-    <link rel="stylesheet" href="./index.css">
   </head>
-
   <body>
     <button class="theme-toggle" id="themeToggle" title="Alternar Modo Claro/Escuro">
       <i class="fas fa-moon"></i>
@@ -216,20 +204,19 @@
       <h2>Sistema de Gestão Financeira</h2>
       <div id="authSection" class="card">
         <h3>Login / Cadastro</h3>
-        <input type="email" id="email" placeholder="Email">
-        <input type="password" id="password" placeholder="Senha">
+        <input type="email" id="email" placeholder="Email" required>
+        <input type="password" id="password" placeholder="Senha" required>
         <button id="registerBtn"><i class="fas fa-user-plus"></i> Cadastrar</button>
         <button id="loginBtn"><i class="fas fa-sign-in-alt"></i> Entrar</button>
       </div>
       <div id="financeSection" style="display: none;">
-        <!-- Seção de Bancos -->
         <div class="card">
           <h3 class="accordion-header">Gerenciar Bancos</h3>
           <div class="accordion-content active">
             <div class="card">
               <h4>Adicionar Banco</h4>
-              <input type="text" id="bankName" placeholder="Nome do Banco">
-              <input type="number" id="bankBalance" placeholder="Saldo Inicial" value="0">
+              <input type="text" id="bankName" placeholder="Nome do Banco" required>
+              <input type="number" id="bankBalance" placeholder="Saldo Inicial" value="0" step="0.01">
               <button id="submitBank"><i class="fas fa-save"></i> Salvar Banco</button>
             </div>
             <div class="card">
@@ -238,14 +225,13 @@
             </div>
           </div>
         </div>
-        <!-- Seção de Pessoas -->
         <div class="card">
           <h3 class="accordion-header">Gerenciar Pessoas</h3>
           <div class="accordion-content active">
             <div class="card">
               <h4>Adicionar Pessoa</h4>
-              <input type="text" id="personName" placeholder="Nome da Pessoa">
-              <input type="text" id="personPhone" placeholder="Telefone (opcional)">
+              <input type="text" id="personName" placeholder="Nome da Pessoa" required>
+              <input type="tel" id="personPhone" placeholder="Telefone (opcional)">
               <button id="submitPerson"><i class="fas fa-save"></i> Salvar Pessoa</button>
             </div>
             <div class="card">
@@ -254,14 +240,13 @@
             </div>
           </div>
         </div>
-        <!-- Seção de Entradas de Dinheiro -->
         <div class="card">
           <h3 class="accordion-header">Registrar Entrada de Dinheiro</h3>
           <div class="accordion-content active">
             <div class="card">
               <h4>Informações da Entrada</h4>
-              <input type="date" id="incomeDate" placeholder="Data da Entrada">
-              <input type="number" id="incomeAmount" placeholder="Valor">
+              <input type="date" id="incomeDate" required>
+              <input type="number" id="incomeAmount" placeholder="Valor" step="0.01" required>
               <select id="incomeType">
                 <option value="pix">PIX</option>
                 <option value="cash">Dinheiro Físico</option>
@@ -275,16 +260,15 @@
             </div>
           </div>
         </div>
-        <!-- Seção de Transferências -->
         <div class="card">
           <h3 class="accordion-header">Registrar Transferência</h3>
           <div class="accordion-content active">
             <div class="card">
               <h4>Informações da Transferência</h4>
-              <input type="date" id="transferDate" placeholder="Data da Transferência">
-              <select id="fromBank"></select>
-              <select id="toBank"></select>
-              <input type="number" id="transferAmount" placeholder="Valor">
+              <input type="date" id="transferDate" required>
+              <select id="fromBank" required></select>
+              <select id="toBank" required></select>
+              <input type="number" id="transferAmount" placeholder="Valor" step="0.01" required>
               <button id="submitTransfer"><i class="fas fa-save"></i> Salvar Transferência</button>
             </div>
             <div class="card">
@@ -293,14 +277,13 @@
             </div>
           </div>
         </div>
-        <!-- Seção de Gastos -->
         <div class="card">
           <h3 class="accordion-header">Registrar Gasto</h3>
           <div class="accordion-content active">
             <div class="card">
               <h4>Informações do Gasto</h4>
-              <input type="date" id="expenseDate" placeholder="Data do Gasto">
-              <input type="number" id="expenseAmount" placeholder="Valor">
+              <input type="date" id="expenseDate" required>
+              <input type="number" id="expenseAmount" placeholder="Valor" step="0.01" required>
               <select id="expenseCategory">
                 <option value="uber">Uber</option>
                 <option value="clothes">Roupa</option>
@@ -317,17 +300,16 @@
             </div>
           </div>
         </div>
-        <!-- Seção de Empréstimos -->
         <div class="card">
-          <h3 class="accordion-header">Registrar Empréstimo de Dinheiro</h3>
+          <h3 class="accordion-header">Registrar Empréstimo</h3>
           <div class="accordion-content active">
             <div class="card">
               <h4>Informações do Empréstimo</h4>
-              <select id="lendingPersonId"></select>
-              <input type="number" id="lendingAmount" placeholder="Valor Total Emprestado">
-              <input type="number" id="lendingInstallments" placeholder="Número de Parcelas">
-              <input type="date" id="lendingStartDate" placeholder="Data de Início">
-              <input type="text" id="lendingEndDate" placeholder="Data de Término (calculada)" readonly="">
+              <select id="lendingPersonId" required></select>
+              <input type="number" id="lendingAmount" placeholder="Valor Total" step="0.01" required>
+              <input type="number" id="lendingInstallments" placeholder="Número de Parcelas" min="1" required>
+              <input type="date" id="lendingStartDate" required>
+              <input type="text" id="lendingEndDate" placeholder="Data de Término (calculada)" readonly>
               <button id="submitLending"><i class="fas fa-save"></i> Salvar Empréstimo</button>
             </div>
             <div class="card">
@@ -336,7 +318,6 @@
             </div>
           </div>
         </div>
-        <!-- Exportações -->
         <div class="card">
           <h3 class="accordion-header">Exportar Relatórios</h3>
           <div class="accordion-content active download-buttons">
@@ -344,13 +325,12 @@
             <button id="exportExcelBtn"><i class="fas fa-file-excel"></i> Baixar Excel</button>
           </div>
         </div>
-        <!-- Enviar Relatório -->
         <div class="card">
-          <h3 class="accordion-header">Enviar Relatório por Número</h3>
+          <h3 class="accordion-header">Enviar Relatório</h3>
           <div class="accordion-content active report-section">
-            <input type="text" id="phoneNumber" placeholder="Número de Telefone (Ex: 5511987654321)" title="Formato: Código do país + DDD + Número. Ex: 5511987654321">
+            <input type="tel" id="phoneNumber" placeholder="Número (Ex: +5511987654321)" pattern="[0-9+]+" title="Formato: +Código do país + DDD + Número">
             <button id="sendReportBtn"><i class="fas fa-paper-plane"></i> Enviar Relatório</button>
-            <small>Para WhatsApp, use o formato completo com código do país (ex: 55 para Brasil).</small>
+            <small>Para WhatsApp, use o formato com + (ex: +5511987654321).</small>
           </div>
         </div>
         <button id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Sair</button>
@@ -403,6 +383,10 @@
       document.getElementById("registerBtn").onclick = () => {
         const email = document.getElementById("email").value;
         const password = document.getElementById("password").value;
+        if (!email || !password) {
+          alert("Preencha email e senha.");
+          return;
+        }
         createUserWithEmailAndPassword(auth, email, password)
           .then(() => alert("Usuário registrado!"))
           .catch(err => alert(err.message));
@@ -410,6 +394,10 @@
       document.getElementById("loginBtn").onclick = () => {
         const email = document.getElementById("email").value;
         const password = document.getElementById("password").value;
+        if (!email || !password) {
+          alert("Preencha email e senha.");
+          return;
+        }
         signInWithEmailAndPassword(auth, email, password)
           .then(() => alert("Login realizado!"))
           .catch(err => alert(err.message));
@@ -456,10 +444,7 @@
           if (snapshot.exists()) {
             const data = snapshot.val();
             Object.entries(data).forEach(([key, item]) => {
-              currentData.banks.push({
-                id: key,
-                ...item
-              });
+              currentData.banks.push({ id: key, ...item });
               const div = document.createElement("div");
               div.className = "card";
               div.innerHTML = `
@@ -485,10 +470,11 @@
       document.getElementById("submitBank").onclick = () => {
         const name = document.getElementById("bankName").value;
         const balance = parseFloat(document.getElementById("bankBalance").value) || 0;
-        const data = {
-          name,
-          balance
-        };
+        if (!name) {
+          alert("Nome do banco é obrigatório.");
+          return;
+        }
+        const data = { name, balance };
         const user = auth.currentUser;
         if (user) {
           const baseRef = ref(db, `financas/${user.uid}/banks`);
@@ -516,6 +502,7 @@
           document.getElementById("bankName").value = item.name;
           document.getElementById("bankBalance").value = item.balance;
           editId = id;
+          scrollToSection('bankName');
         }
       };
       window.deleteBank = (id) => {
@@ -525,7 +512,6 @@
           });
         }
       };
-
       function clearBankForm() {
         document.getElementById("bankName").value = "";
         document.getElementById("bankBalance").value = "0";
@@ -543,10 +529,7 @@
           if (snapshot.exists()) {
             const data = snapshot.val();
             Object.entries(data).forEach(([key, item]) => {
-              currentData.people.push({
-                id: key,
-                ...item
-              });
+              currentData.people.push({ id: key, ...item });
               const div = document.createElement("div");
               div.className = "card";
               div.innerHTML = `
@@ -569,12 +552,13 @@
       document.getElementById("submitPerson").onclick = () => {
         const name = document.getElementById("personName").value;
         const phone = document.getElementById("personPhone").value;
-        const data = {
-          name,
-          phone
-        };
+        if (!name) {
+          alert("Nome da pessoa é obrigatório.");
+          return;
+        }
+        const data = { name, phone };
         const user = auth.currentUser;
-        if (user && name) {
+        if (user) {
           const baseRef = ref(db, `financas/${user.uid}/people`);
           if (editId) {
             update(ref(db, `financas/${user.uid}/people/${editId}`), data).then(() => {
@@ -600,6 +584,7 @@
           document.getElementById("personName").value = item.name;
           document.getElementById("personPhone").value = item.phone || '';
           editId = id;
+          scrollToSection('personName');
         }
       };
       window.deletePerson = (id) => {
@@ -609,7 +594,6 @@
           });
         }
       };
-
       function clearPersonForm() {
         document.getElementById("personName").value = "";
         document.getElementById("personPhone").value = "";
@@ -625,10 +609,7 @@
           if (snapshot.exists()) {
             const data = snapshot.val();
             Object.entries(data).forEach(([key, item]) => {
-              currentData.incomes.push({
-                id: key,
-                ...item
-              });
+              currentData.incomes.push({ id: key, ...item });
               const div = document.createElement("div");
               div.className = "card";
               div.innerHTML = `
@@ -650,14 +631,13 @@
         const amount = parseFloat(document.getElementById("incomeAmount").value) || 0;
         const type = document.getElementById("incomeType").value;
         const bankId = document.getElementById("incomeBank").value;
-        const data = {
-          date,
-          amount,
-          type,
-          bankId
-        };
+        if (!date || amount <= 0) {
+          alert("Data e valor são obrigatórios.");
+          return;
+        }
+        const data = { date, amount, type, bankId };
         const user = auth.currentUser;
-        if (user && amount > 0) {
+        if (user) {
           push(ref(db, `financas/${user.uid}/incomes`)).then(newRef => {
             set(newRef, data).then(() => {
               if (bankId) {
@@ -680,12 +660,9 @@
             remove(ref(db, `financas/${auth.currentUser.uid}/incomes/${id}`)).then(() => {
               loadIncomes(auth.currentUser.uid);
             });
-          }, {
-            onlyOnce: true
-          });
+          }, { onlyOnce: true });
         }
       };
-
       function clearIncomeForm() {
         document.getElementById("incomeDate").value = "";
         document.getElementById("incomeAmount").value = "";
@@ -703,10 +680,7 @@
           if (snapshot.exists()) {
             const data = snapshot.val();
             Object.entries(data).forEach(([key, item]) => {
-              currentData.transfers.push({
-                id: key,
-                ...item
-              });
+              currentData.transfers.push({ id: key, ...item });
               const div = document.createElement("div");
               div.className = "card";
               div.innerHTML = `
@@ -728,16 +702,11 @@
         const fromBankId = document.getElementById("fromBank").value;
         const toBankId = document.getElementById("toBank").value;
         const amount = parseFloat(document.getElementById("transferAmount").value) || 0;
-        if (fromBankId === toBankId || amount <= 0 || !fromBankId || !toBankId) {
-          alert("Dados inválidos.");
+        if (!date || !fromBankId || !toBankId || amount <= 0 || fromBankId === toBankId) {
+          alert("Preencha todos os campos corretamente.");
           return;
         }
-        const data = {
-          date,
-          fromBankId,
-          toBankId,
-          amount
-        };
+        const data = { date, fromBankId, toBankId, amount };
         const user = auth.currentUser;
         if (user) {
           push(ref(db, `financas/${user.uid}/transfers`)).then(newRef => {
@@ -760,12 +729,9 @@
             remove(ref(db, `financas/${auth.currentUser.uid}/transfers/${id}`)).then(() => {
               loadTransfers(auth.currentUser.uid);
             });
-          }, {
-            onlyOnce: true
-          });
+          }, { onlyOnce: true });
         }
       };
-
       function clearTransferForm() {
         document.getElementById("transferDate").value = "";
         document.getElementById("fromBank").value = "";
@@ -783,10 +749,7 @@
           if (snapshot.exists()) {
             const data = snapshot.val();
             Object.entries(data).forEach(([key, item]) => {
-              currentData.expenses.push({
-                id: key,
-                ...item
-              });
+              currentData.expenses.push({ id: key, ...item });
               const div = document.createElement("div");
               div.className = "card";
               div.innerHTML = `
@@ -810,15 +773,13 @@
         const category = document.getElementById("expenseCategory").value;
         const description = document.getElementById("expenseDescription").value;
         const bankId = document.getElementById("expenseBank").value;
-        const data = {
-          date,
-          amount,
-          category,
-          description,
-          bankId
-        };
+        if (!date || amount <= 0) {
+          alert("Data e valor são obrigatórios.");
+          return;
+        }
+        const data = { date, amount, category, description, bankId };
         const user = auth.currentUser;
-        if (user && amount > 0) {
+        if (user) {
           push(ref(db, `financas/${user.uid}/expenses`)).then(newRef => {
             set(newRef, data).then(() => {
               if (bankId) {
@@ -841,12 +802,9 @@
             remove(ref(db, `financas/${auth.currentUser.uid}/expenses/${id}`)).then(() => {
               loadExpenses(user.uid);
             });
-          }, {
-            onlyOnce: true
-          });
+          }, { onlyOnce: true });
         }
       };
-
       function clearExpenseForm() {
         document.getElementById("expenseDate").value = "";
         document.getElementById("expenseAmount").value = "";
@@ -855,7 +813,7 @@
         document.getElementById("expenseBank").value = "";
       }
 
-      // Empréstimos de Dinheiro
+      // Empréstimos
       function loadLendings(uid) {
         const lendingsRef = ref(db, `financas/${uid}/lendings`);
         onValue(lendingsRef, snapshot => {
@@ -865,10 +823,7 @@
           if (snapshot.exists()) {
             const data = snapshot.val();
             Object.entries(data).forEach(([key, item]) => {
-              currentData.lendings.push({
-                id: key,
-                ...item
-              });
+              currentData.lendings.push({ id: key, ...item });
               const div = document.createElement("div");
               div.className = "card";
               div.innerHTML = `
@@ -908,7 +863,7 @@
                 <strong>Status:</strong> ${instItem.status}<br>
               `;
               if (instItem.status === 'pending') {
-                instDiv.innerHTML += `<button onclick="markInstallmentPaid('${lendingId}', '${instKey}')"><i class="fas fa-check"></i> Marcar Pago</button>`;
+                instDiv.innerHTML += `<button onclick="markInstallmentPaid('${lendingId}', '${instKey}')"><i class="fas fa-check"></i> Pago</button>`;
               }
               instDiv.innerHTML += `<button onclick="editInstallment('${lendingId}', '${instKey}', ${instItem.amount}, '${instItem.dueDate}')"><i class="fas fa-edit"></i> Editar</button>`;
               container.appendChild(instDiv);
@@ -919,7 +874,6 @@
         });
       }
 
-      // Calcular data de término automaticamente
       function calculateEndDate() {
         const startDateStr = document.getElementById("lendingStartDate").value;
         const installments = parseInt(document.getElementById("lendingInstallments").value) || 1;
@@ -941,20 +895,18 @@
         const amount = parseFloat(document.getElementById("lendingAmount").value) || 0;
         const installmentsCount = parseInt(document.getElementById("lendingInstallments").value) || 1;
         const startDate = document.getElementById("lendingStartDate").value;
+        if (!personId || amount <= 0 || installmentsCount <= 0 || !startDate) {
+          alert("Preencha todos os campos obrigatórios.");
+          return;
+        }
         const endDate = calculateEndDateFromStart(startDate, installmentsCount);
-        const data = {
-          personId,
-          amount,
-          startDate,
-          endDate,
-          installmentsCount
-        };
+        const data = { personId, amount, startDate, endDate, installmentsCount };
         const user = auth.currentUser;
-        if (user && amount > 0 && personId && installmentsCount > 0 && startDate) {
+        if (user) {
           const baseRef = ref(db, `financas/${user.uid}/lendings`);
           if (editId) {
             update(ref(db, `financas/${user.uid}/lendings/${editId}`), data).then(() => {
-              alert("Empréstimo atualizado! Nota: Parcelas existentes não foram alteradas automaticamente. Edite manualmente se necessário.");
+              alert("Empréstimo atualizado!");
               editId = null;
               clearLendingForm();
               loadLendings(user.uid);
@@ -964,14 +916,12 @@
               const lendingId = newRef.key;
               set(newRef, data).then(() => {
                 generateInstallments(user.uid, lendingId, amount, installmentsCount, startDate, endDate);
-                alert("Empréstimo registrado com parcelas geradas!");
+                alert("Empréstimo registrado!");
                 clearLendingForm();
                 loadLendings(user.uid);
               });
             });
           }
-        } else {
-          alert("Preencha todos os campos obrigatórios.");
         }
       };
 
@@ -1009,6 +959,7 @@
           document.getElementById("lendingStartDate").value = item.startDate;
           calculateEndDate();
           editId = id;
+          scrollToSection('lendingPersonId');
         }
       };
       window.deleteLending = (id) => {
@@ -1019,11 +970,8 @@
         }
       };
       window.markInstallmentPaid = (lendingId, instId) => {
-        update(ref(db, `financas/${auth.currentUser.uid}/lendings/${lendingId}/installments/${instId}`), {
-          status: 'paid'
-        }).then(() => {
+        update(ref(db, `financas/${auth.currentUser.uid}/lendings/${lendingId}/installments/${instId}`), { status: 'paid' }).then(() => {
           alert("Parcela marcada como paga!");
-          // loadLendings called via onValue
         });
       };
       window.editInstallment = (lendingId, instId, currentAmount, currentDueDate) => {
@@ -1043,7 +991,6 @@
           }
         }
       };
-
       function clearLendingForm() {
         document.getElementById("lendingPersonId").value = "";
         document.getElementById("lendingAmount").value = "";
@@ -1052,7 +999,7 @@
         document.getElementById("lendingEndDate").value = "";
       }
 
-      // Função para formatar data para DD/MM/YYYY
+      // Função para formatar data
       function formatDate(dateStr) {
         if (!dateStr) return 'N/A';
         const [year, month, day] = dateStr.split('-');
@@ -1064,109 +1011,79 @@
         const bank = currentData.banks.find(b => b.id === bankId);
         return bank ? bank.name : 'Desconhecido';
       }
-
       function getPersonName(personId) {
         const person = currentData.people.find(p => p.id === personId);
         return person ? person.name : 'Desconhecido';
       }
-
       function updateBankBalance(uid, bankId, amount, add) {
         const bankRef = ref(db, `financas/${uid}/banks/${bankId}`);
         onValue(bankRef, snapshot => {
           if (snapshot.exists()) {
             let balance = snapshot.val().balance;
             balance = add ? balance + amount : balance - amount;
-            update(bankRef, {
-              balance
-            });
+            update(bankRef, { balance });
           }
-        }, {
-          onlyOnce: true
-        });
+        }, { onlyOnce: true });
+      }
+      function scrollToSection(elementId) {
+        const element = document.getElementById(elementId);
+        const accordion = element.closest('.accordion-content');
+        if (accordion && !accordion.classList.contains('active')) {
+          accordion.previousElementSibling.click();
+        }
+        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
 
       // Exportação para PDF
       document.getElementById("exportPdfBtn").onclick = async () => {
-        const {
-          jsPDF
-        } = window.jspdf;
+        const { jsPDF } = window.jspdf;
         const doc = new jsPDF();
         let startY = 10;
-        doc.setFontSize(16);
+        doc.setFontSize(14);
         doc.text("Relatório Financeiro", 10, startY);
         startY += 10;
 
-        // Bancos
-        doc.setFontSize(12);
+        doc.setFontSize(10);
         doc.text("Bancos:", 10, startY);
-        startY += 10;
+        startY += 8;
         const bankColumns = ["Nome", "Saldo"];
         const bankRows = currentData.banks.map(b => [b.name, `R$ ${b.balance.toFixed(2)}`]);
-        doc.autoTable({
-          head: [bankColumns],
-          body: bankRows,
-          startY
-        });
+        doc.autoTable({ head: [bankColumns], body: bankRows, startY, theme: 'grid', styles: { fontSize: 8 } });
 
-        // Pessoas
-        startY = doc.lastAutoTable.finalY + 10;
+        startY = doc.lastAutoTable.finalY + 8;
         doc.text("Pessoas:", 10, startY);
-        startY += 10;
+        startY += 8;
         const peopleColumns = ["Nome", "Telefone"];
         const peopleRows = currentData.people.map(p => [p.name, p.phone || 'N/A']);
-        doc.autoTable({
-          head: [peopleColumns],
-          body: peopleRows,
-          startY
-        });
+        doc.autoTable({ head: [peopleColumns], body: peopleRows, startY, theme: 'grid', styles: { fontSize: 8 } });
 
-        // Entradas
-        startY = doc.lastAutoTable.finalY + 10;
+        startY = doc.lastAutoTable.finalY + 8;
         doc.text("Entradas:", 10, startY);
-        startY += 10;
+        startY += 8;
         const incomeColumns = ["Data", "Valor", "Tipo", "Banco"];
         const incomeRows = currentData.incomes.map(i => [formatDate(i.date), `R$ ${i.amount.toFixed(2)}`, i.type, getBankName(i.bankId)]);
-        doc.autoTable({
-          head: [incomeColumns],
-          body: incomeRows,
-          startY
-        });
+        doc.autoTable({ head: [incomeColumns], body: incomeRows, startY, theme: 'grid', styles: { fontSize: 8 } });
 
-        // Transferências
-        startY = doc.lastAutoTable.finalY + 10;
+        startY = doc.lastAutoTable.finalY + 8;
         doc.text("Transferências:", 10, startY);
-        startY += 10;
+        startY += 8;
         const transferColumns = ["Data", "De", "Para", "Valor"];
         const transferRows = currentData.transfers.map(t => [formatDate(t.date), getBankName(t.fromBankId), getBankName(t.toBankId), `R$ ${t.amount.toFixed(2)}`]);
-        doc.autoTable({
-          head: [transferColumns],
-          body: transferRows,
-          startY
-        });
+        doc.autoTable({ head: [transferColumns], body: transferRows, startY, theme: 'grid', styles: { fontSize: 8 } });
 
-        // Gastos
-        startY = doc.lastAutoTable.finalY + 10;
+        startY = doc.lastAutoTable.finalY + 8;
         doc.text("Gastos:", 10, startY);
-        startY += 10;
+        startY += 8;
         const expenseColumns = ["Data", "Valor", "Categoria", "Descrição", "Banco"];
         const expenseRows = currentData.expenses.map(e => [formatDate(e.date), `R$ ${e.amount.toFixed(2)}`, e.category, e.description || 'N/A', getBankName(e.bankId)]);
-        doc.autoTable({
-          head: [expenseColumns],
-          body: expenseRows,
-          startY
-        });
+        doc.autoTable({ head: [expenseColumns], body: expenseRows, startY, theme: 'grid', styles: { fontSize: 8 } });
 
-        // Empréstimos
-        startY = doc.lastAutoTable.finalY + 10;
+        startY = doc.lastAutoTable.finalY + 8;
         doc.text("Empréstimos:", 10, startY);
-        startY += 10;
+        startY += 8;
         const lendingColumns = ["Pessoa", "Valor Total", "Data Início", "Data Término", "Parcelas"];
         const lendingRows = currentData.lendings.map(l => [getPersonName(l.personId), `R$ ${l.amount.toFixed(2)}`, formatDate(l.startDate), formatDate(l.endDate), l.installmentsCount]);
-        doc.autoTable({
-          head: [lendingColumns],
-          body: lendingRows,
-          startY
-        });
+        doc.autoTable({ head: [lendingColumns], body: lendingRows, startY, theme: 'grid', styles: { fontSize: 8 } });
 
         doc.save("relatorio_financeiro.pdf");
       };
@@ -1174,22 +1091,16 @@
       // Exportação para Excel
       document.getElementById("exportExcelBtn").onclick = () => {
         const workbook = XLSX.utils.book_new();
-
-        // Bancos
         const bankSheet = XLSX.utils.json_to_sheet(currentData.banks.map(b => ({
           Nome: b.name,
           Saldo: b.balance
         })));
         XLSX.utils.book_append_sheet(workbook, bankSheet, "Bancos");
-
-        // Pessoas
         const peopleSheet = XLSX.utils.json_to_sheet(currentData.people.map(p => ({
           Nome: p.name,
           Telefone: p.phone
         })));
         XLSX.utils.book_append_sheet(workbook, peopleSheet, "Pessoas");
-
-        // Entradas
         const incomeSheet = XLSX.utils.json_to_sheet(currentData.incomes.map(i => ({
           Data: formatDate(i.date),
           Valor: i.amount,
@@ -1197,8 +1108,6 @@
           Banco: getBankName(i.bankId)
         })));
         XLSX.utils.book_append_sheet(workbook, incomeSheet, "Entradas");
-
-        // Transferências
         const transferSheet = XLSX.utils.json_to_sheet(currentData.transfers.map(t => ({
           Data: formatDate(t.date),
           De: getBankName(t.fromBankId),
@@ -1206,8 +1115,6 @@
           Valor: t.amount
         })));
         XLSX.utils.book_append_sheet(workbook, transferSheet, "Transferências");
-
-        // Gastos
         const expenseSheet = XLSX.utils.json_to_sheet(currentData.expenses.map(e => ({
           Data: formatDate(e.date),
           Valor: e.amount,
@@ -1216,8 +1123,6 @@
           Banco: getBankName(e.bankId)
         })));
         XLSX.utils.book_append_sheet(workbook, expenseSheet, "Gastos");
-
-        // Empréstimos
         const lendingSheet = XLSX.utils.json_to_sheet(currentData.lendings.map(l => ({
           Pessoa: getPersonName(l.personId),
           "Valor Total": l.amount,
@@ -1226,66 +1131,48 @@
           Parcelas: l.installmentsCount
         })));
         XLSX.utils.book_append_sheet(workbook, lendingSheet, "Empréstimos");
-
         XLSX.writeFile(workbook, "relatorio_financeiro.xlsx");
       };
 
       // Enviar relatório por número
       document.getElementById("sendReportBtn").onclick = () => {
         const phoneNumber = document.getElementById("phoneNumber").value.trim();
-        if (!phoneNumber) {
-          alert("Por favor, insira um número de telefone.");
+        if (!/^\+\d{10,}$/.test(phoneNumber)) {
+          alert("Insira um número válido com código do país (ex: +5511987654321).");
           return;
         }
         let reportMessage = "Relatório Financeiro:\n\n";
-
-        // Bancos
         reportMessage += "Bancos:\n";
         currentData.banks.forEach(b => {
           reportMessage += `Nome: ${b.name}, Saldo: R$ ${b.balance.toFixed(2)}\n`;
         });
         reportMessage += "--------------------------------------\n";
-
-        // Pessoas
         reportMessage += "Pessoas:\n";
         currentData.people.forEach(p => {
           reportMessage += `Nome: ${p.name}, Telefone: ${p.phone || 'N/A'}\n`;
         });
         reportMessage += "--------------------------------------\n";
-
-        // Entradas
         reportMessage += "Entradas:\n";
         currentData.incomes.forEach(i => {
           reportMessage += `Data: ${formatDate(i.date)}, Valor: R$ ${i.amount.toFixed(2)}, Tipo: ${i.type}, Banco: ${getBankName(i.bankId)}\n`;
         });
         reportMessage += "--------------------------------------\n";
-
-        // Transferências
         reportMessage += "Transferências:\n";
         currentData.transfers.forEach(t => {
           reportMessage += `Data: ${formatDate(t.date)}, De: ${getBankName(t.fromBankId)}, Para: ${getBankName(t.toBankId)}, Valor: R$ ${t.amount.toFixed(2)}\n`;
         });
         reportMessage += "--------------------------------------\n";
-
-        // Gastos
         reportMessage += "Gastos:\n";
         currentData.expenses.forEach(e => {
           reportMessage += `Data: ${formatDate(e.date)}, Valor: R$ ${e.amount.toFixed(2)}, Categoria: ${e.category}, Descrição: ${e.description || 'N/A'}\n`;
         });
         reportMessage += "--------------------------------------\n";
-
-        // Empréstimos
         reportMessage += "Empréstimos:\n";
         currentData.lendings.forEach(l => {
           reportMessage += `Pessoa: ${getPersonName(l.personId)}, Valor Total: R$ ${l.amount.toFixed(2)}, Início: ${formatDate(l.startDate)}, Término: ${formatDate(l.endDate)}, Parcelas: ${l.installmentsCount}\n`;
         });
-        reportMessage += "--------------------------------------\n";
-
-        const confirmSend = confirm("Isso abrirá o WhatsApp com a mensagem preenchida. Deseja continuar?");
-        if (confirmSend) {
-          const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(reportMessage)}`;
-          window.open(whatsappUrl, '_blank');
-        }
+        const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(reportMessage)}`;
+        window.open(whatsappUrl, '_blank');
       };
 
       // Modo escuro
@@ -1305,11 +1192,13 @@
       document.querySelectorAll(".accordion-header").forEach(header => {
         header.addEventListener("click", () => {
           const content = header.nextElementSibling;
-          content.classList.toggle("active");
+          const isActive = content.classList.contains("active");
+          document.querySelectorAll(".accordion-content").forEach(c => c.classList.remove("active"));
+          if (!isActive) {
+            content.classList.add("active");
+          }
         });
       });
     </script>
-
   </body>
-
 </html>
